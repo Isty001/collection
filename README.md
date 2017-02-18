@@ -108,7 +108,7 @@ greetings
 
 If the callback returns `false`, the item will be removed
 
-```
+```c
 list->append(list, "Unit")
     ->append(list, "Test")
     ->filter(list, function(bool, (void *item) {
