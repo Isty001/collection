@@ -6,9 +6,7 @@
 #include <stdbool.h>
 
 
-#ifdef __GNUC__
 #define function(return_type, function_body) ({ return_type __fn__ function_body __fn__; })
-#endif
 
 
 typedef struct Node Node;

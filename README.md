@@ -44,10 +44,22 @@ int main(void)
 
 ## API
 
+The API uses a kinda 'oo' interface, storing the function pointers on the `List` instance
+mainly for a bit of syntactic sugar to allow chainable consecutive calls. Thus the functions
+return the `List` pointer they received. Of course when passing a `List *` to a method, it does not
+matter on which instance it's stored on.
+
+GCC allows the following cool macro, (found [here](http://stackoverflow.com/questions/10405436/anonymous-functions-using-gcc-statement-expressions)) that makes possible to simulate anonymous functions, as you can 
+see in the examples
+
+```c
+#define function(return_type, function_body) ({ return_type __fn__ function_body __fn__; })
+```
+
 
 #### Foreach
 
-You can iterate the List from both direction. (left = from head, right = from last)
+You can iterate the `List` from both direction. (left = from head, right = from last)
 ```c
 list
     ->foreach_l(list, function(void, (void *item) {
@@ -82,7 +94,7 @@ With `fold_r` the output will be `TestUnit`
 
 #### Map
 
-Mapping new values to the list is also done by a callback function
+Mapping new values to the `List` is also done by a callback function
 
 ```c
 char hello[10] = "Hello";
@@ -124,7 +136,7 @@ list->append(list, "Unit")
 
 #### Concat
 
-Items of the other List will be simply appended to the other
+Items of the other `List` will be simply appended to the other
 
 ```c
 List *list_1 = list_new();
@@ -183,7 +195,7 @@ Negative indexes can also be used. For example, -2 will be the second from the l
 `set()`, `delete_at()` and `delete()` will ignore the invalid indexes.
 
 
-You can always check the size of the list via the `count` field.
+You can always check the size of the `List` via the `count` field.
 
 
 or by pointer:
