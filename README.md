@@ -55,6 +55,13 @@ see in the examples
 #define function(return_type, function_body) ({ return_type __fn__ function_body __fn__; })
 ```
 
+#### Create and free a List
+
+```c
+List *list = list_new();
+//
+list->free(list);
+```
 
 #### Foreach
 
