@@ -196,7 +196,7 @@ if (0 == strcmp("delete_me", list->get(list, 0))) {
     list->set(list, 10, "Something else");
 }
 ```
-Negative indexes can also be used. For example, -2 will be the second from the last
+Negative indexes can also be used. For example, -2 will be the second from the last.
 `get()` will return `NULL` if the index is out of bounds.
 `set()`, `delete_at()` and `delete()` will ignore the invalid indexes.
 
