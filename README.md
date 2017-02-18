@@ -10,36 +10,35 @@ int main(void)
 {
     int initial = 0;
     int a = 10, b = 20, c = 99, d = 50;
-    List *list = list_new();
+    List *first = list_new();
+    List *second = list_new();
+    
+    first
+        ->append(first, &c)
+        ->append(first, &d);
 
-    List *other = list_new();
-    other
-        ->append(other, &c)
-        ->append(other, &d);
-
-    int sum = *(int *) list
-        ->append(list, &a)
-        ->append(list, &b)
-        ->concat(list, other->filter(other, (Predicate) function(bool, (int *item) {
+    int sum = *(int *) second
+        ->append(second, &a)
+        ->append(second, &b)
+        ->concat(second, first->filter(first, (Predicate) function(bool, (int *item) {
             return 0 == *item % 5;
         })))
-        ->map(list, (Map) function(int *, (int *item) {
+        ->map(second, (Map) function(int *, (int *item) {
             *item += 5;
             return item;
         }))
-        ->fold_l(list, &initial, (Fold) function(int *, (int *val, int *item) {
+        ->fold_l(second, &initial, (Fold) function(int *, (int *val, int *item) {
             *val += *item;
             return val;
         }));
 
     printf("%d", sum); // Will output 95 
 
-    list->free(list);
-    other->free(other);
-    
+    second->free(second);
+    first->free(first);
+
     return 0;
 }
-
 ```
 
 ## API
