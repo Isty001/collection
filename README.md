@@ -63,6 +63,15 @@ List *list = list_new();
 list->free(list);
 ```
 
+It's also possible to create a copy of an existing `List`. It can be useful if you don't want to
+modify it, but rather create a modified version.
+
+
+```c
+List *new = original->clone(original);
+```
+
+
 #### Foreach
 
 You can iterate the `List` from both direction. (left = from head, right = from last)
