@@ -48,6 +48,8 @@ mainly for a bit of syntactic sugar to allow chainable consecutive calls. Thus t
 return the `List` pointer they received. Of course when passing a `List *` to a method, it does not
 matter on which instance it's stored on.
 
+Functions ending with `_f` will free the argument they got, except the first 'self' `List` argument.
+
 GCC allows the following cool macro, (found [here](http://stackoverflow.com/questions/10405436/anonymous-functions-using-gcc-statement-expressions)) that makes possible to simulate anonymous functions, as you can 
 see in the examples
 
@@ -149,27 +151,33 @@ list->append(list, "Unit")
 ```
 
 
-#### Concat
+#### Concat and Merge
 
 Items of the other `List` will be simply appended to the other
 
 ```c
+char *unit = "Unit ";
+
 List *list_1 = list_new();
 list_1
-    ->append(list_1, "Unit ")
+    ->append(list_1, unit)
     ->append(list_1, "Test");
 
 List *list_2 = list_new();
 list_2
     ->append(list_2, "I ")
     ->append(list_2, "said: ")
+    ->append(list_2, unit)
     ->concat(list_2, list_1)
     ->foreach_l(list_2, (Foreach) function(void, (char *str) {
         printf(str);
     }));
     
-    // I said: Unit Test
+    // I said: Unit Unit Test
 ```
+
+Merge method is the same, except that it will only add items that are not already in the `List`.
+Using `merge()` with the above example, the otput will be `I said: Unit Test`
 
 
 #### Manipulating the ends of the List:

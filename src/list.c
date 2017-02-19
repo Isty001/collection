@@ -285,6 +285,33 @@ static List *concat(List *list, List *other)
     return list;
 }
 
+static List *concat_f(List *list, List *other)
+{
+    list->concat(list, other);
+    other->free(other);
+
+    return list;
+}
+
+static List *merge(List *list, List *other)
+{
+    other->foreach_l(other, function(void, (void *item) {
+        if (!list->has(list, item)) {
+            list->append(list, item);
+        }
+    }));
+
+    return list;
+}
+
+static List *merge_f(List *list, List *other)
+{
+    list->merge(list, other);
+    other->free(other);
+
+    return list;
+}
+
 static void *fold_l(List *list, void *value, Fold fold)
 {
     node_walk(list, head, next, value = fold(value, node->value));
@@ -336,6 +363,9 @@ List *list_new(void)
     list->append = append;
     list->pop = pop;
     list->concat = concat;
+    list->concat_f = concat_f;
+    list->merge = merge;
+    list->merge_f = merge_f;
     list->get = get;
     list->set = set;
     list->has = has;

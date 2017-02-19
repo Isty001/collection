@@ -31,6 +31,9 @@ struct List {
     List *(*map)(List *, Map);
     List *(*filter)(List *, Predicate);
     List *(*concat)(List *, List *);
+    List *(*concat_f)(List *, List *);
+    List *(*merge)(List *, List *);
+    List *(*merge_f)(List *, List *);
     List *(*clone)(List *);
     void *(*fold_l)(List *, void *, Fold);
     void *(*fold_r)(List *, void *, Fold);

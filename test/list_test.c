@@ -192,21 +192,47 @@ MU_TEST(test_delete)
 
 MU_TEST(test_concat)
 {
+    char *common = "Test";
+
     List *list = list_new();
     list
         ->append(list, "Unit")
+        ->append(list, &common)
         ->append(list, "Test");
 
     List *other = list_new();
-    other->append(other, "Hello");
+    other
+        ->append(other, &common)
+        ->append(other, "Hello");
 
-    list->concat(list, other);
+    list->concat_f(list, other);
 
-    mu_assert_int_eq(3, list->count);
-    mu_assert_int_eq(0, strcmp("Hello", list->get(list, 2)));
+    mu_assert_int_eq(5, list->count);
+    mu_assert_int_eq(0, strcmp("Hello", list->get(list, 4)));
 
     list->free(list);
-    other->free(other);
+}
+
+MU_TEST(test_merge)
+{
+    char *common = "Hello";
+
+    List *list = list_new();
+    list
+        ->append(list, "Test")
+        ->append(list, common);
+
+    List *other = list_new();
+    other
+        ->append(other, common)
+        ->append(other, "Unit");
+
+    list->merge_f(list, other);
+
+    mu_assert_int_eq(3, list->count);
+    mu_assert_int_eq(0, strcmp(common, list->get(list, 1)));
+
+    list->free(list);
 }
 
 MU_TEST(test_filter)
@@ -302,6 +328,7 @@ int main(void)
     MU_RUN_TEST(test_clone);
     MU_RUN_TEST(test_delete);
     MU_RUN_TEST(test_concat);
+    MU_RUN_TEST(test_merge);
     MU_RUN_TEST(test_filter);
     MU_RUN_TEST(test_exists);
     MU_RUN_TEST(test_complex_op);
