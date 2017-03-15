@@ -17,6 +17,10 @@ struct Node {
     void *value;
 };
 
+static Alloc DEFAULT_NODE_ALLOC = malloc;
+static Release DEFAULT_NODE_RELEASE = free;
+static Release DEFAULT_ITEM_RELEASE = NULL;
+
 
 static void *head(List *list)
 {
@@ -32,9 +36,9 @@ static void *end(List *list)
     return last ? last->value : NULL;
 }
 
-static Node *node_new(Node *prev, Node *next, void *value)
+static Node *node_new(List *list, Node *prev, Node *next, void *value)
 {
-    Node *node = malloc(sizeof(Node));
+    Node *node = list->alloc_node(sizeof(Node));
     node->prev = prev;
     node->next = next;
     node->value = value;
@@ -42,12 +46,12 @@ static Node *node_new(Node *prev, Node *next, void *value)
     return node;
 }
 
-static void node_free(List *list, Node *node)
+static void node_release(List *list, Node *node)
 {
-    if (list->free_item) {
-        list->free_item(node->value);
+    if (list->release_item) {
+        list->release_item(node->value);
     }
-    free(node);
+    list->release_node(node);
 }
 
 static void add_first_node(List *list, Node *new)
@@ -58,7 +62,7 @@ static void add_first_node(List *list, Node *new)
 
 static List *prepend(List *list, void *value)
 {
-    Node *new = node_new(NULL, list->head_node, value);
+    Node *new = node_new(list, NULL, list->head_node, value);
 
     if (0 < list->count) {
         list->head_node->prev = new;
@@ -73,7 +77,7 @@ static List *prepend(List *list, void *value)
 
 static List *append(List *list, void *value)
 {
-    Node *new = node_new(list->last_node, NULL, value);
+    Node *new = node_new(list, list->last_node, NULL, value);
 
     if (0 < list->count) {
         list->last_node->next = new;
@@ -97,7 +101,7 @@ static void *remove_end(List *list, Node *node)
 
     list->count--;
     void *val = node->value;
-    node_free(list, node);
+    node_release(list, node);
 
     return val;
 }
@@ -209,7 +213,7 @@ static void delete_node(List *list, Node *node)
         if (node == list->last_node) {
             list->last_node = node->prev;
         }
-        node_free(list, node);
+        node_release(list, node);
         list->count--;
     }
 }
@@ -345,12 +349,19 @@ static void free_(List *list)
         tmp = head;
         head = head->next;
 
-        if (list->free_item) {
-            list->free_item(tmp->value);
+        if (list->release_item) {
+            list->release_item(tmp->value);
         }
-        free(tmp);
+        list->release_node(tmp);
     }
     free(list);
+}
+
+void list_set_allocators(Alloc node_alloc, Release node_release, Release item_release)
+{
+    DEFAULT_NODE_ALLOC = node_alloc ? node_alloc : malloc;
+    DEFAULT_NODE_RELEASE = node_release ? node_release : free;
+    DEFAULT_ITEM_RELEASE = item_release ? item_release : NULL;
 }
 
 List *list_new(void)
@@ -384,7 +395,9 @@ List *list_new(void)
     list->free = free_;
     list->head_node = NULL;
     list->last_node = NULL;
-    list->free_item = NULL;
+    list->release_item = DEFAULT_ITEM_RELEASE;
+    list->alloc_node = DEFAULT_NODE_ALLOC;
+    list->release_node = DEFAULT_NODE_RELEASE;
 
     return list;
 }

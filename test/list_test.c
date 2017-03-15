@@ -77,7 +77,7 @@ MU_TEST(test_foreach)
 MU_TEST(test_map)
 {
     List *list = list_new();
-    list->free_item = free;
+    list->release_item = free;
 
     list
         ->append(list, "Hello")
@@ -279,6 +279,20 @@ MU_TEST(test_exists)
     list->free(list);
 }
 
+MU_TEST(test_free_item)
+{
+    int *a = malloc(sizeof(int));
+    List *list = list_new();
+    list->release_item = free;
+
+    list->append(list, a);
+    list->delete(list, a);
+
+    list->get(list, 0);
+
+    list->free(list);
+}
+
 MU_TEST(test_complex_op)
 {
     int x = 100, y = 999;
@@ -317,6 +331,48 @@ MU_TEST(test_complex_op)
     other->free(other);
 }
 
+static int NODE_ALLOC_INVOKED = 0;
+static int NODE_RELEASE_INVOKED = 0;
+static int ITEM_RELEASE_INVOKED = 0;
+
+
+static void *test_node_alloc(size_t size)
+{
+    NODE_ALLOC_INVOKED++;
+    return malloc(size);
+}
+
+static void test_node_release(void *node)
+{
+    NODE_RELEASE_INVOKED++;
+    free(node);
+}
+
+static void test_item_release(void *item)
+{
+    ITEM_RELEASE_INVOKED++;
+    free(item);
+}
+
+MU_TEST(test_allocators)
+{
+    list_set_allocators(test_node_alloc, test_node_release, test_item_release);
+
+    char *item = strdup("Test");
+
+    List *list = list_new();
+    list->append(list, item);
+    list->append(list, strdup("Hello"));
+    mu_assert_int_eq(2, NODE_ALLOC_INVOKED);
+
+    list->delete(list, item);
+    mu_assert_int_eq(1, NODE_RELEASE_INVOKED);
+
+    list->free(list);
+    mu_assert_int_eq(2, NODE_RELEASE_INVOKED);
+    mu_assert_int_eq(2, ITEM_RELEASE_INVOKED);
+}
+
 int main(void)
 {
     MU_RUN_TEST(test_prepend);
@@ -331,7 +387,9 @@ int main(void)
     MU_RUN_TEST(test_merge);
     MU_RUN_TEST(test_filter);
     MU_RUN_TEST(test_exists);
+    MU_RUN_TEST(test_free_item);
     MU_RUN_TEST(test_complex_op);
+    MU_RUN_TEST(test_allocators);
 
     MU_REPORT();
 

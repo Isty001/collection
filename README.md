@@ -65,6 +65,12 @@ List *list = list_new();
 list->free(list);
 ```
 
+If you need custom allocator functions you can set the default via `list_set_allocators();`
+The first two arguments are the `List` node allocator and free functions, the third is a free, for
+your items stored. If you pass `NULL` at any argument, the defaults will be used. For custom behavior
+on a given instance, just override `release_item`, `alloc_node`, or `release_node` members.
+
+
 It's also possible to create a copy of an existing `List`. It can be useful if you don't want to
 modify it, but rather create a modified version.
 

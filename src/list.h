@@ -16,6 +16,9 @@ typedef void (*Foreach)(void *);
 typedef void *(*Map)(void *);
 typedef void *(*Fold)(void *value, void *current);
 
+typedef void *(*Alloc)(size_t);
+typedef void (*Release)(void *);
+
 struct List {
     Node *head_node;
     Node *last_node;
@@ -45,11 +48,15 @@ struct List {
     List *(*delete_at)(List *, int);
     List *(*delete)(List *, void *);
     void (*free)(List *);
-    void (*free_item)(void *);
+    Release release_item;
+    Alloc alloc_node;
+    Release release_node;
 };
 
 
 List *list_new(void);
+
+void list_set_allocators(Alloc node_alloc, Release node_release, Release item_release);
 
 
 #endif
