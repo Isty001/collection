@@ -58,5 +58,7 @@ List *list_new(void);
 
 void list_set_allocators(Alloc node_alloc, Release node_release, Release item_release);
 
+size_t list_node_size(void);
+
 
 #endif

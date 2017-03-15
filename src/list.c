@@ -364,6 +364,11 @@ void list_set_allocators(Alloc node_alloc, Release node_release, Release item_re
     DEFAULT_ITEM_RELEASE = item_release ? item_release : NULL;
 }
 
+size_t list_node_size(void)
+{
+    return sizeof(Node);
+}
+
 List *list_new(void)
 {
     List *list = malloc(sizeof(List));
