@@ -46,7 +46,7 @@ static Node *node_new(List *list, Node *prev, Node *next, void *value)
     return node;
 }
 
-static void node_release(List *list, Node *node)
+static void node_free(List *list, Node *node)
 {
     if (list->release_item) {
         list->release_item(node->value);
@@ -101,7 +101,7 @@ static void *remove_end(List *list, Node *node)
 
     list->count--;
     void *val = node->value;
-    node_release(list, node);
+    node_free(list, node);
 
     return val;
 }
@@ -213,7 +213,7 @@ static void delete_node(List *list, Node *node)
         if (node == list->last_node) {
             list->last_node = node->prev;
         }
-        node_release(list, node);
+        node_free(list, node);
         list->count--;
     }
 }
