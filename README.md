@@ -130,9 +130,7 @@ greetings
         sprintf(greeting, "%s!!", greeting);
         return greeting;
     }))
-    ->foreach_l(greetings, (Foreach) function(void, (char *greeting) {
-        puts(greeting);
-    }));
+    ->foreach_l(greetings, (Foreach) puts);
     
     //Hello!!
     //Hi!!
@@ -149,9 +147,7 @@ list->append(list, "Unit")
     ->filter(list, function(bool, (void *item) {
         return 0 == strcmp("Test", item);
     }))
-    ->foreach_l(list, (Foreach) function(void, (char *item) {
-        puts(item);
-    }));
+    ->foreach_l(list, (Foreach) puts);
     
     //Test
 ```
@@ -175,9 +171,7 @@ list_2
     ->append(list_2, "said: ")
     ->append(list_2, unit)
     ->concat(list_2, list_1)
-    ->foreach_l(list_2, (Foreach) function(void, (char *str) {
-        printf(str);
-    }));
+    ->foreach_l(list_2, (Foreach) printf);
     
     // I said: Unit Unit Test
 ```
