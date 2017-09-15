@@ -193,6 +193,11 @@ void *first = list->shift(list);
 void *last = list->pop(list);
 ```
 
+replace:
+```c
+list->replace(list, &from, &to);
+```
+
 get the first/last item without removing
 ```c
 void *first = list->head(list);

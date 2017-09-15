@@ -52,6 +52,18 @@ MU_TEST(test_append)
     list->free(list);
 }
 
+MU_TEST(test_replace)
+{
+    List *list = list_new();
+    int a = 10, b = 20, c = 30;
+
+    list->append(list, &a);
+    list->append(list, &c);
+    list->replace(list, &a, &b);
+
+    mu_assert_int_eq(20, *(int *) list->get(list, 0));
+}
+
 MU_TEST(test_foreach)
 {
     List *list = list_new();
@@ -377,6 +389,7 @@ int main(void)
 {
     MU_RUN_TEST(test_prepend);
     MU_RUN_TEST(test_append);
+    MU_RUN_TEST(test_replace);
     MU_RUN_TEST(test_foreach);
     MU_RUN_TEST(test_map);
     MU_RUN_TEST(test_get_index);

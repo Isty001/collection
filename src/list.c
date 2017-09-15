@@ -90,6 +90,22 @@ static List *append(List *list, void *value)
     return list;
 }
 
+static List *replace(List *list, void *from, void *to)
+{
+    Node *found = NULL;
+
+    node_walk(list, head, next,
+              if (from == node->value) {
+                  found = node;
+              }
+    )
+    if (found) {
+        found->value = to;
+    }
+
+    return list;
+}
+
 static void *remove_end(List *list, Node *node)
 {
     if (node == list->head_node) {
@@ -256,7 +272,7 @@ static void *find(List *list, Predicate predicate)
 
 static bool exists(List *list, Predicate predicate)
 {
-    /** We can rely on find()'s NULL, because the user supplied value
+    /** We can't rely on find()'s NULL, because the user supplied value
      * could be also NULL */
     node_walk(list, head, next,
               if (predicate(node->value)) return true;
@@ -301,8 +317,8 @@ static List *merge(List *list, List *other)
 {
     other->foreach_l(other, function(void, (void *item) {
         if (!list->has(list, item)) {
-            list->append(list, item);
-        }
+        list->append(list, item);
+    }
     }));
 
     return list;
@@ -377,6 +393,7 @@ List *list_new(void)
     list->prepend = prepend;
     list->shift = shift;
     list->append = append;
+    list->replace = replace;
     list->pop = pop;
     list->concat = concat;
     list->concat_f = concat_f;

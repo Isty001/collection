@@ -27,6 +27,7 @@ struct List {
     List *(*prepend)(List *, void *);
     void *(*shift)(List *);
     List *(*append)(List *, void *);
+    List *(*replace)(List *, void *, void *);
     void *(*pop)(List *);
     void *(*head)(List *);
     void *(*last)(List *);
